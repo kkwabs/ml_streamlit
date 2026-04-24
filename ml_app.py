@@ -3,17 +3,8 @@ import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
 
-# Streamlit Libraries
-import streamlit as st
-import pandas as pd
-
-# Machine Learning Libraries
-from sklearn.datasets import load_iris
-from sklearn.ensemble import RandomForestClassifier
-
 st.title("RandomForest Predictor")
 
-# Cache data for efficient loading
 @st.cache_data
 def load_data():
     iris = load_iris()
@@ -21,18 +12,14 @@ def load_data():
     df["species"] = iris.target
     return df, iris.target_names
 
-# Load dataset
 df, target_name = load_data()
 
-# Dataset for model training
 X = df.iloc[:, :-1]
 y = df["species"]
 
-# Model training
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Store tested samples
 if "df" not in st.session_state:
     st.session_state.df = pd.DataFrame({
         'sepal length (cm)': [],
@@ -45,35 +32,15 @@ if "df" not in st.session_state:
 st.write("Enter values for input features:")
 
 with st.form("add_row_form"):
-    sepal_length = st.slider(
-        "Sepal length",
-        float(df['sepal length (cm)'].min()),
-        float(df['sepal length (cm)'].max())
-    )
-
-    sepal_width = st.slider(
-        "Sepal width",
-        float(df['sepal width (cm)'].min()),
-        float(df['sepal width (cm)'].max())
-    )
-
-    petal_length = st.slider(
-        "Petal length",
-        float(df['petal length (cm)'].min()),
-        float(df['petal length (cm)'].max())
-    )
-
-    petal_width = st.slider(
-        "Petal width",
-        float(df['petal width (cm)'].min()),
-        float(df['petal width (cm)'].max())
-    )
+    sepal_length = st.slider("Sepal length", float(df['sepal length (cm)'].min()), float(df['sepal length (cm)'].max()))
+    sepal_width = st.slider("Sepal width", float(df['sepal width (cm)'].min()), float(df['sepal width (cm)'].max()))
+    petal_length = st.slider("Petal length", float(df['petal length (cm)'].min()), float(df['petal length (cm)'].max()))
+    petal_width = st.slider("Petal width", float(df['petal width (cm)'].min()), float(df['petal width (cm)'].max()))
 
     submitted = st.form_submit_button("Predict")
 
     if submitted:
         input_data = [[sepal_length, sepal_width, petal_length, petal_width]]
-
         prediction = model.predict(input_data)
         predicted_species = target_name[prediction[0]]
 
@@ -85,10 +52,7 @@ with st.form("add_row_form"):
             'predicted species': predicted_species
         }])
 
-        st.session_state.df = pd.concat(
-            [st.session_state.df, new_row],
-            ignore_index=True
-        )
+        st.session_state.df = pd.concat([st.session_state.df, new_row], ignore_index=True)
 
         st.success(f"Predicted species is: {predicted_species}")
 
